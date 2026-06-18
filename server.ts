@@ -209,6 +209,147 @@ const DEFAULT_SESSIONS = [
   }
 ];
 
+const DEFAULT_ACHIEVEMENTS = [
+  {
+    id: 'ach-1',
+    title: 'Hindi Internationalization Contribution',
+    category: 'Open Source',
+    issuer: 'Cal.com Ecosystem',
+    date: '2025-02',
+    description: 'Developed complete localization packages enabling 600M+ native speakers globally to use robust calendar platforms.',
+    icon: 'opensource',
+    tags: ['i18n', 'Translation', 'cal.com', 'TypeScript'],
+    proofUrl: 'https://github.com/calcom/cal.com'
+  },
+  {
+    id: 'ach-2',
+    title: 'Secured Systems Ideathon - Best Prototype',
+    category: 'Hackathons',
+    issuer: 'Society of Computer Security & Networks',
+    date: '2024-11',
+    description: 'Engineered a sandboxed container isolation scheduler mapping ingress packet patterns on rotating socket lanes of private Tor endpoints.',
+    icon: 'ideathon',
+    tags: ['Docker', 'Tor Socks', 'Sandboxing', 'Go'],
+    proofUrl: 'https://github.com/darshan-kumar-k-r'
+  },
+  {
+    id: 'ach-3',
+    title: 'Systems & Cybersecurity TA Appointments',
+    category: 'Professional Appointments',
+    issuer: 'Department of Computer Science',
+    date: '2024-09',
+    description: 'Supervised Kubernetes orchestration sandboxing labs, Docker storage layers, and continuous release pipelines in active Jenkins pools.',
+    icon: 'ta',
+    tags: ['Kubernetes', 'TA', 'CI/CD Pipelines', 'Security Labs']
+  }
+];
+
+const DEFAULT_OPEN_SOURCE = [
+  {
+    id: 'os-1',
+    projectName: 'Hindi Internationalization (i18n)',
+    repoName: 'calcom/cal.com',
+    contributionSummary: 'Authored complete local dictionary map, localized dynamic date formatters, and grammatical gender-fluid agreement adapters inside cal.com, facilitating calendar coordination for over 600 million Hindi speakers globally.',
+    pullRequestUrl: 'https://github.com/calcom/cal.com',
+    commitHash: '725ba88a318cdfa02a06be977c7f39446342cbcc',
+    impactMetric: '600M+ Speakers',
+    repositoryUrl: 'https://github.com/calcom/cal.com'
+  }
+];
+
+const DEFAULT_SERVICES = [
+  {
+    id: 'saas-mvp',
+    name: 'Need an MVP?',
+    tagline: 'Rapid-cycle fully functional product builds engineered specifically to validate product-market fit and impress investors.',
+    whatIBuild: [
+      'Core atomic user workflows integrated with dynamic state storage and safe cloud authentication',
+      'Third-party subscription structures processed safely via backend proxy APIs',
+      'Intuitive design modules and custom onboarding steps maximizing user retention metrics'
+    ],
+    techStack: ['React / Vite', 'TypeScript', 'Node.js', 'Firebase / PostgreSQL', 'Tailwind CSS', 'Motion'],
+    process: [
+      '1. Scope Definition & High-Yield Feature Alignment (Week 1)',
+      '2. Complete Database Mapping & Secure Integration (Week 1.5)',
+      '3. Functional UI Assembly & State Connectivity (Week 2)',
+      '4. Beta Testing, Refinement, & Cloud Ingress Release (Week 3)'
+    ],
+    timeline: '3 Weeks',
+    pricingRange: '$4,000 - $6,000',
+    ctaButtonText: 'INQUIRY // NEED AN MVP'
+  },
+  {
+    id: 'internal-tools',
+    name: 'Need Internal Tools?',
+    tagline: 'Custom workflow managers, admin stations, and operations logs that replace brittle manual spreadsheets.',
+    whatIBuild: [
+      'Administrative controls with integrated secure role access boards',
+      'Custom CRUD setups, bulk file uploads parsing, and direct DB write interfaces',
+      'Unified logs and status trackers syncing live data records securely'
+    ],
+    techStack: ['React', 'TypeScript', 'Node.js', 'Express', 'PostgreSQL', 'Tailwind CSS'],
+    process: [
+      '1. Operational Bottleneck Identification & Wireframing (Week 1)',
+      '2. Secure Database Modeling & Access Rule Schema (Week 1.5)',
+      '3. Feature Integration & Access Level Locks (Week 2-3)',
+      '4. Performance Optimization & Production Release (Week 4)'
+    ],
+    timeline: '3 - 4 Weeks',
+    pricingRange: '$3,500 - $5,500',
+    ctaButtonText: 'INQUIRY // NEED INTERNAL TOOLS'
+  },
+  {
+    id: 'dashboards',
+    name: 'Need Dashboards?',
+    tagline: 'Sub-second loading interactive analytics stations displaying clean charts and quick data grids.',
+    whatIBuild: [
+      'Custom data visualization nodes using fluid, responsive charting systems',
+      'Fast client-side live list searches, filters, and dynamic grouping pipelines',
+      'Unified data views aggregating divergent telemetry threads into cohesive panels'
+    ],
+    techStack: ['React / Vite', 'Tailwind CSS', 'Recharts / D3', 'TypeScript', 'REST APIs'],
+    process: [
+      '1. Graphic Structure planning & negative space sizing (Week 1)',
+      '2. Query bindings & real-time client state caching (Week 2)',
+      '3. Chart interactions, controls & dynamic tooltips (Week 2.5)',
+      '4. Speed tuning, rendering optimizations & launch (Week 3)'
+    ],
+    timeline: '2 - 3 Weeks',
+    pricingRange: '$2,500 - $4,500',
+    ctaButtonText: 'INQUIRY // NEED DASHBOARDS'
+  }
+];
+
+const DEFAULT_JOURNALS = [
+  {
+    id: 'dist-pipeline-ingest',
+    title: 'Designing a High-Availability Distributed Ingestion Pipeline',
+    category: 'System Design',
+    publishDate: '2026-05-12',
+    readingTime: '6 min read',
+    summary: 'Architecting a fault-tolerant message pipeline utilizing Raft consensus agreements, multi-lane Redis memory tables, and parallel consumer groups.',
+    tags: ['Distributed Systems', 'Raft Consensus', 'Redis', 'Node.js', 'Go'],
+    status: 'published',
+    isFeatured: true,
+    content: `# Designing a High-Availability Distributed Ingestion Pipeline\n\n## Executive Overview\nWhen systems digest upwards of **50,000 requests per second (RPS)**, standard transactional routers choke on thread execution and TCP socket locks. This publication evaluates the architecture of a fault-tolerant distributed ingestion pipeline capable of zero-loss operations during failover cycles.\n\nWe focus on isolating ingress nodes, establishing a reliable memory buffer, and coordinating worker clusters.\n\n## 1. System Architecture Blueprint\nThe solution splits concerns into three independent scaling horizons:\n\n\`\`\`\n[ INGRESS NODES ] ---> [ DISTRIBUTED BUFFER ] ---> [ Parallel Consumer Pools ]\n (Nginx Proxy)             (Redis Clusters)                (Worker Nodes)\n\`\`\`\n\n- **Ingress Layer**: Stateless Express/Go microservices behind an Nginx packet proxy running IP-hashing load balancing.\n- **Buffer Layer**: Redis cluster running partitioned hash rings with a primary replica set. Writes block only long enough to persist to memory.\n- **Consumer Layer**: Autoscale workers pulling logs from streams using worker-specific group offsets.\n\n## 2. Ingress Router Implementation (TypeScript Specimen)\nBelow is the highly micro-optimized Express server middleware for fast queuing:\n\n\`\`\`typescript\nimport express from 'express';\nimport Redis from 'ioredis';\n\nconst app = express();\nconst redis = new Redis(process.env.REDIS_CLUSTER_URL!);\n\n// Pre-allocated static buffers to avoid GC thrashing\nconst HEARTBEAT_PAYLOAD = Buffer.from(JSON.stringify({ status: 'ACK', offset_synced: true }));\n\napp.post('/api/v1/telemetry/dispatch', express.raw({ type: 'application/json' }), async (req, res) => {\n  try {\n    const payloadBuffer = req.body;\n    \n    // Non-blocking stream queue ingestion\n    const streamKey = \\\`stream:telemetry:\\\${Date.now() % 8}\\\`;\n    await redis.xadd(streamKey, '*', 'payload', payloadBuffer);\n    \n    res.setHeader('Content-Type', 'application/json');\n    return res.end(HEARTBEAT_PAYLOAD);\n  } catch (err) {\n    console.error('[CRITICAL] Queue saturation:', err);\n    res.statusCode = 503;\n    return res.end(JSON.stringify({ error: 'BUFFER_SATURATED_FAIL' }));\n  }\n});\n\`\`\`\n\n## 3. Achieving Resiliency with Raft Consensus\nTo coordinate metadata offsets safely across multiple worker nodes, we apply a **Raft Consensus State Machine**:\n\n> "State engines must reject corrupt worker offsets. A leader is elected uniformly using randomized timers, ensuring matching split-brain prevention."`
+  }
+];
+
+const DEFAULT_RESUME = {
+  views: 232,
+  downloads: 74,
+  versionHistory: [
+    {
+      version: 'v1.4.2',
+      uploadedAt: '2026-06-15T12:00:00.000Z',
+      summary: 'Original base credentials record compiling cloud security achievements.',
+      fileSize: '342 KB',
+      fileBase64: 'placeholder'
+    }
+  ],
+  activeVersion: 'v1.4.2'
+};
+
 const DEFAULT_DB = {
   appearance: DEFAULT_APPEARANCE,
   settings: DEFAULT_SETTINGS,
@@ -219,7 +360,12 @@ const DEFAULT_DB = {
   changelogs: DEFAULT_CHANGELOG,
   sessions: DEFAULT_SESSIONS,
   activityLogs: [],
-  versionHistoryStates: []
+  versionHistoryStates: [],
+  achievements: DEFAULT_ACHIEVEMENTS,
+  openSource: DEFAULT_OPEN_SOURCE,
+  services: DEFAULT_SERVICES,
+  journals: DEFAULT_JOURNALS,
+  resume: DEFAULT_RESUME
 };
 
 // Load or Seed DB
@@ -310,14 +456,19 @@ app.get('/api/auth/status', (req, res) => {
 // API: PUBLIC GET STATE
 app.get('/api/public/data', (req, res) => {
   const db = loadDB();
-  const publicProjects = db.projects.filter((p: any) => p.lifecycleStatus === 'published' || !p.lifecycleStatus);
+  const publicProjects = (db.projects || []).filter((p: any) => p.lifecycleStatus === 'published' || !p.lifecycleStatus);
   const publicData = {
-    appearance: db.appearance,
-    settings: db.settings,
+    appearance: db.appearance || {},
+    settings: db.settings || {},
     projects: publicProjects,
-    research: db.research,
-    experiences: db.experiences,
-    changelogs: db.changelogs
+    research: db.research || [],
+    experiences: db.experiences || [],
+    changelogs: db.changelogs || [],
+    achievements: db.achievements || [],
+    openSource: db.openSource || [],
+    services: db.services || [],
+    journals: db.journals || [],
+    resume: db.resume || {}
   };
   res.json(publicData);
 });
@@ -359,11 +510,16 @@ app.post('/api/admin/save', requireAuth, (req, res) => {
       description: newLog.description || '',
       snapshot: {
         appearance: { ...newDb.appearance },
-        projects: JSON.parse(JSON.stringify(newDb.projects)),
-        research: JSON.parse(JSON.stringify(newDb.research)),
-        experiences: JSON.parse(JSON.stringify(newDb.experiences)),
+        projects: JSON.parse(JSON.stringify(newDb.projects || [])),
+        research: JSON.parse(JSON.stringify(newDb.research || [])),
+        experiences: JSON.parse(JSON.stringify(newDb.experiences || [])),
         settings: { ...newDb.settings },
-        changelogs: JSON.parse(JSON.stringify(newDb.changelogs))
+        changelogs: JSON.parse(JSON.stringify(newDb.changelogs || [])),
+        achievements: JSON.parse(JSON.stringify(newDb.achievements || [])),
+        openSource: JSON.parse(JSON.stringify(newDb.openSource || [])),
+        services: JSON.parse(JSON.stringify(newDb.services || [])),
+        journals: JSON.parse(JSON.stringify(newDb.journals || [])),
+        resume: { ...(newDb.resume || {}) }
       }
     };
     newDb.versionHistoryStates = [record, ...historyStates];
@@ -407,6 +563,21 @@ app.post('/api/admin/rollback', requireAuth, (req, res) => {
   db.settings = { ...db.settings, ...snapshot.settings };
   if (snapshot.changelogs) {
     db.changelogs = [...snapshot.changelogs];
+  }
+  if (snapshot.achievements) {
+    db.achievements = [...snapshot.achievements];
+  }
+  if (snapshot.openSource) {
+    db.openSource = [...snapshot.openSource];
+  }
+  if (snapshot.services) {
+    db.services = [...snapshot.services];
+  }
+  if (snapshot.journals) {
+    db.journals = [...snapshot.journals];
+  }
+  if (snapshot.resume) {
+    db.resume = { ...snapshot.resume };
   }
 
   // Log rollback event

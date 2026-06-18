@@ -22,6 +22,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { AppWindowId, WindowInstance } from '../types/os';
+import { SettingsCMS } from '../utils/portfolioDb';
 
 interface DockProps {
   windows: WindowInstance[];
@@ -29,6 +30,7 @@ interface DockProps {
   onIconClick: (id: AppWindowId) => void;
   onOpenCommandPalette: () => void;
   onClearDesktop: () => void;
+  settings?: SettingsCMS;
 }
 
 export default function Dock({
@@ -37,6 +39,7 @@ export default function Dock({
   onIconClick,
   onOpenCommandPalette,
   onClearDesktop,
+  settings,
 }: DockProps) {
   // Map icons dynamically to lucide react elements
   const getIconComponent = (iconName: string) => {
@@ -74,26 +77,41 @@ export default function Dock({
     }
   };
 
-  const navItems: {
-    id: AppWindowId | 'home' | 'github' | 'linkedin' | 'leetcode' | 'cmd-palette';
-    label: string;
-    icon: string;
-    isExternal?: boolean;
-    url?: string;
-  }[] = [
+  const gitUrl = settings?.githubUrl || 'https://github.com/darshan-kumar-k-r';
+  const liUrl = settings?.linkedinUrl || 'https://linkedin.com/in/darshankumarkr97';
+  const lcUrl = settings?.leetcodeUrl || 'https://leetcode.com/darshan_kumar_kr';
+
+  const baseItems = [
     { id: 'home', label: 'DevOS Hub', icon: 'home' },
     { id: 'projects', label: 'Projects', icon: 'projects' },
     { id: 'research', label: 'Research Lab', icon: 'research' },
     { id: 'experience', label: 'Experience', icon: 'experience' },
     { id: 'resume', label: 'Resume.pdf', icon: 'resume' },
     { id: 'contact', label: 'Contact', icon: 'contact' },
-    { id: 'github', label: 'GitHub', icon: 'github', isExternal: true, url: 'https://github.com/darshan-kumar-k-r' },
-    { id: 'linkedin', label: 'LinkedIn', icon: 'linkedin', isExternal: true, url: 'https://linkedin.com/in/darshankumarkr97' },
-    { id: 'leetcode', label: 'LeetCode', icon: 'leetcode', isExternal: true, url: 'https://leetcode.com/darshan_kumar_kr' },
+    { id: 'github', label: 'GitHub', icon: 'github', isExternal: true, url: gitUrl },
+    { id: 'linkedin', label: 'LinkedIn', icon: 'linkedin', isExternal: true, url: liUrl },
+    { id: 'leetcode', label: 'LeetCode', icon: 'leetcode', isExternal: true, url: lcUrl },
     { id: 'cmd-palette', label: 'Palette (Ctrl+K)', icon: 'cmd-palette' },
   ];
 
-  const handleItemClick = (item: typeof navItems[0]) => {
+  // Filter hidden items
+  const hiddenList = settings?.hiddenDockItems ? settings.hiddenDockItems.split(',') : [];
+  let filteredItems = baseItems.filter((item) => !hiddenList.includes(item.id));
+
+  // Sort by dockItemOrder
+  if (settings?.dockItemOrder) {
+    const order = settings.dockItemOrder.split(',');
+    filteredItems.sort((a, b) => {
+      const idxA = order.indexOf(a.id);
+      const idxB = order.indexOf(b.id);
+      if (idxA === -1 && idxB === -1) return 0;
+      if (idxA === -1) return 1;
+      if (idxB === -1) return -1;
+      return idxA - idxB;
+    });
+  }
+
+  const handleItemClick = (item: typeof baseItems[0]) => {
     if (item.isExternal && item.url) {
       window.open(item.url, '_blank', 'noopener,noreferrer');
       return;
@@ -115,7 +133,7 @@ export default function Dock({
   return (
     <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-[45] max-w-[95vw]">
       <div className="bg-black/25 backdrop-blur-md border border-white/5 px-2 py-1 rounded-xl flex items-center gap-1 shadow-md relative">
-        {navItems.map((item) => {
+        {filteredItems.map((item) => {
           const Icon = getIconComponent(item.icon);
           
           // Check if this window corresponds to an actual open window state

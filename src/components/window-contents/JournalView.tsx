@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   BookOpen, 
   Terminal, 
@@ -20,6 +20,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { PortfolioDB } from '../../utils/portfolioDb';
 
 interface JournalPost {
   id: string;
@@ -297,14 +298,26 @@ const ProjectRowItem = React.memo(({ item, onSelect }) => {
 ];
 
 export default function JournalView() {
+  const [journalsList, setJournalsList] = useState<JournalPost[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [activePostId, setActivePostId] = useState<string | null>(null);
   const [copiedPostId, setCopiedPostId] = useState<string | null>(null);
 
+  useEffect(() => {
+    const loaded = PortfolioDB.getJournals();
+    if (loaded && loaded.length > 0) {
+      setJournalsList(loaded as any);
+    } else {
+      setJournalsList(JOURNAL_POSTS);
+    }
+  }, []);
+
+  const activeJournals = journalsList && journalsList.length > 0 ? journalsList : JOURNAL_POSTS;
+
   // Filter posts based on search and category tab
   const filteredPosts = useMemo(() => {
-    return JOURNAL_POSTS.filter((post) => {
+    return activeJournals.filter((post) => {
       const matchSearch = 
         post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         post.summary.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -312,9 +325,9 @@ export default function JournalView() {
       const matchCategory = selectedCategory === 'All' || post.category === selectedCategory;
       return matchSearch && matchCategory;
     });
-  }, [searchTerm, selectedCategory]);
+  }, [activeJournals, searchTerm, selectedCategory]);
 
-  const activePost = JOURNAL_POSTS.find(p => p.id === activePostId);
+  const activePost = activeJournals.find(p => p.id === activePostId);
 
   // Customized monospaced Markdown-to-HTML element translator
   const parseMarkdownToReact = (text: string) => {

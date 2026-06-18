@@ -11,6 +11,62 @@ export interface AppearanceSettings {
   theme: 'graphite' | 'midnight' | 'minimal-light' | 'professional-dark';
   accentColor: string; // Hex or tailwind class name
   desktopIconLayout: Record<string, { x: number; y: number }>;
+  dockPosition?: 'bottom' | 'left' | 'right';
+  desktopWidgetVisibility?: boolean;
+  desktopLayoutPreset?: 'default' | 'clean' | 'dense';
+}
+
+export interface AchievementItem {
+  id: string;
+  title: string;
+  category: string;
+  issuer: string;
+  date: string;
+  description: string;
+  detailsLabel?: string;
+  icon: 'publication' | 'ideathon' | 'opensource' | 'ta' | 'internship';
+  tags: string[];
+  certificate?: string; // base64 or url
+  awardImage?: string; // base64 or url
+  proofUrl?: string;
+}
+
+export interface OpenSourceContributionCMS {
+  id: string;
+  projectName: string;
+  repoName: string;
+  contributionSummary: string;
+  pullRequestUrl: string;
+  commitHash: string;
+  screenshots?: string[]; // base64 or url
+  impactMetric: string;
+  reviewDiscussions?: string;
+  repositoryUrl: string;
+}
+
+export interface ServiceSpec {
+  id: string;
+  name: string;
+  tagline: string;
+  whatIBuild: string[];
+  techStack: string[];
+  process: string[];
+  timeline: string;
+  pricingRange?: string;
+  ctaButtonText?: string;
+}
+
+export interface JournalPost {
+  id: string;
+  title: string;
+  category: 'System Design' | 'Architecture' | 'Research' | 'Development Learnings';
+  publishDate: string;
+  readingTime: string;
+  summary: string;
+  tags: string[];
+  content: string;
+  status?: 'draft' | 'published' | 'archived';
+  isFeatured?: boolean;
 }
 
 export interface ResearchItemCMS {
@@ -23,6 +79,12 @@ export interface ResearchItemCMS {
   keyFindings: string[];
   pdfBase64?: string;
   timeline: { phase: string; date: string; title: string; desc: string; status: string }[];
+  methodology?: string;
+  findings?: string;
+  publicationLink?: string;
+  conference?: string;
+  images?: string[];
+  statistics?: { name: string; value: string }[];
 }
 
 export interface ExperienceCMS {
@@ -35,6 +97,7 @@ export interface ExperienceCMS {
   tags: string[];
   bullets: string[];
   keyAchievement: string;
+  displayOrder?: number;
 }
 
 export interface ResumeVersion {
@@ -155,6 +218,30 @@ export interface SettingsCMS {
   metaDescriptionExperience?: string;
   metaTitleOpenSource?: string;
   metaDescriptionOpenSource?: string;
+  // Section 1 additions
+  fullName?: string;
+  professionalTitle?: string;
+  tagline?: string;
+  aboutMe?: string;
+  location?: string;
+  availabilityStatus?: string;
+  portfolioDomain?: string;
+  currentFocusAreas?: string;
+  currentlyBuildingItems?: string;
+  profilePhoto?: string;
+  heroSectionContent?: string;
+  // Home Desktop & Navigation CMS additions
+  showGreetingsWidget?: boolean;
+  showFocusWidget?: boolean;
+  showAnnouncementWidget?: boolean;
+  announcementText?: string;
+  disabledWindows?: string;
+  hiddenDesktopIcons?: string;
+  hiddenDockItems?: string;
+  desktopIconOrder?: string;
+  dockItemOrder?: string;
+  statusIndicatorText?: string;
+  statusIndicatorColor?: string;
 }
 
 export class PortfolioDB {
@@ -216,6 +303,11 @@ export class PortfolioDB {
           if (data.sessions) this.setStored('devos_cms_sessions', data.sessions);
           if (data.activityLogs) this.setStored('devos_cms_activity_logs', data.activityLogs);
           if (data.versionHistoryStates) this.setStored('devos_cms_version_history', data.versionHistoryStates);
+          if (data.achievements) this.setStored('devos_cms_achievements', data.achievements);
+          if (data.openSource) this.setStored('devos_cms_opensource', data.openSource);
+          if (data.services) this.setStored('devos_cms_services', data.services);
+          if (data.journals) this.setStored('devos_cms_journals', data.journals);
+          if (data.resume) this.setStored('devos_cms_resume_settings', data.resume);
         } else {
           // Store public-only slice mapping
           if (data.appearance) this.setStored('devos_cms_appearance', data.appearance);
@@ -224,6 +316,11 @@ export class PortfolioDB {
           if (data.research) this.setStored('devos_cms_research', data.research);
           if (data.experiences) this.setStored('devos_cms_experiences', data.experiences);
           if (data.changelogs) this.setStored('devos_cms_changelogs', data.changelogs);
+          if (data.achievements) this.setStored('devos_cms_achievements', data.achievements);
+          if (data.openSource) this.setStored('devos_cms_opensource', data.openSource);
+          if (data.services) this.setStored('devos_cms_services', data.services);
+          if (data.journals) this.setStored('devos_cms_journals', data.journals);
+          if (data.resume) this.setStored('devos_cms_resume_settings', data.resume);
         }
       }
     } catch (e) {
@@ -328,11 +425,19 @@ export class PortfolioDB {
 
   // RESUME (compatibility fallback helper)
   static getResumeSettings(): ResumeSettings {
-    return {
+    return this.getStored<ResumeSettings>('devos_cms_resume_settings', {
       views: 232,
       downloads: 74,
-      versionHistory: []
-    };
+      versionHistory: [
+        {
+          version: 'v1.4.2',
+          uploadedAt: new Date().toISOString(),
+          summary: 'Original base credentials record compiling cloud security achievements.',
+          fileSize: '342 KB',
+          fileBase64: 'placeholder'
+        }
+      ]
+    });
   }
 
   // MEDIA LIBRARY
@@ -391,7 +496,31 @@ export class PortfolioDB {
       metaTitleHomepage: 'Darshan Kumar K R | Portfolio',
       metaDescriptionHomepage: 'Systems Architect & Cloud Security Specialist portfolio built in React.',
       metaKeywordsHomepage: 'Cybersecurity, Docker, Kubernetes, React, Portfolio',
-      ogImageHomepage: '/uploads/profile.png'
+      ogImageHomepage: '/uploads/profile.png',
+      // Profile Defaults
+      fullName: 'Darshan Kumar K R',
+      professionalTitle: 'Cloud Infrastructure & Systems Security Engineer',
+      tagline: 'Securing distributed systems at global scale.',
+      aboutMe: 'I am a passionate systems developer researching Tor merchant stylometry, container runtimes, consensus networks, and automated vulnerability management patterns.',
+      location: 'Bengaluru, Karnataka, India',
+      availabilityStatus: 'AVAILABLE FOR ALLIANCE',
+      portfolioDomain: 'darshankumar.me',
+      currentFocusAreas: 'Cloud Security Research, Container Orchestration Lab, & Enterprise CMS Deployments',
+      currentlyBuildingItems: 'Deep Learning Threat Classifier in isolated runtime environment',
+      profilePhoto: '/uploads/profile.png',
+      heroSectionContent: 'I engineer robust distributed infrastructures, develop deep learning threat intelligence classifiers, and build secure systems pipelines.',
+      // Widget/Layout config defaults
+      showGreetingsWidget: true,
+      showFocusWidget: true,
+      showAnnouncementWidget: false,
+      announcementText: 'Systems upgraded to DevOS Kernel 2.1 - All modules secure and fully operational.',
+      disabledWindows: '',
+      hiddenDesktopIcons: '',
+      hiddenDockItems: '',
+      desktopIconOrder: 'projects,research,experience,resume,architecture,opensource,howiwork,work,contact,admin',
+      dockItemOrder: 'home,projects,research,experience,resume,contact,github,linkedin,leetcode,cmd-palette',
+      statusIndicatorText: 'AVAILABLE FOR ALLIANCE',
+      statusIndicatorColor: 'emerald'
     };
     return this.getStored<SettingsCMS>('devos_cms_settings', defaults);
   }
@@ -643,7 +772,73 @@ export class PortfolioDB {
 
   static saveResumeSettings(settings: ResumeSettings) {
     this.setStored('devos_cms_resume_settings', settings);
-    this.persistToServer('resume', settings);
+    this.persistToServer('resume', settings, {
+      action: 'Resume Metadata Adjusted',
+      section: 'Resume Specs',
+      oldValue: 'Prior details',
+      newValue: `Downloads count: ${settings.downloads}, Version entries count: ${settings.versionHistory.length}`,
+      description: 'Updated Resume version metadata trackers, file payloads or direct summaries.'
+    });
+  }
+
+  // ACHIEVEMENTS
+  static getAchievements(): AchievementItem[] {
+    return this.getStored<AchievementItem[]>('devos_cms_achievements', []);
+  }
+  static saveAchievements(achievements: AchievementItem[]) {
+    this.setStored('devos_cms_achievements', achievements);
+    this.persistToServer('achievements', achievements, {
+      action: 'Achievements Catalogue Adjusted',
+      section: 'Achievements Index',
+      oldValue: 'Existing inventory',
+      newValue: `Updated counts to: ${achievements.length}`,
+      description: 'Modified system certified awards and proof entries.'
+    });
+  }
+
+  // OPEN SOURCE
+  static getOpenSource(): OpenSourceContributionCMS[] {
+    return this.getStored<OpenSourceContributionCMS[]>('devos_cms_opensource', []);
+  }
+  static saveOpenSource(contributions: OpenSourceContributionCMS[]) {
+    this.setStored('devos_cms_opensource', contributions);
+    this.persistToServer('openSource', contributions, {
+      action: 'Open Source Index Adjusted',
+      section: 'Open Source',
+      oldValue: 'Prior catalog',
+      newValue: `Count is: ${contributions.length}`,
+      description: 'Updated merged pull requests and ecosystem modules.'
+    });
+  }
+
+  // SERVICES
+  static getServices(): ServiceSpec[] {
+    return this.getStored<ServiceSpec[]>('devos_cms_services', []);
+  }
+  static saveServices(services: ServiceSpec[]) {
+    this.setStored('devos_cms_services', services);
+    this.persistToServer('services', services, {
+      action: 'Services Contract Catalog Updated',
+      section: 'Freelance & SOW',
+      oldValue: 'Existing solutions list',
+      newValue: `Custom service lists count: ${services.length}`,
+      description: 'Saved custom specifications, time matrices and budgets.'
+    });
+  }
+
+  // JOURNALS (ARTICLES)
+  static getJournals(): JournalPost[] {
+    return this.getStored<JournalPost[]>('devos_cms_journals', []);
+  }
+  static saveJournals(journals: JournalPost[]) {
+    this.setStored('devos_cms_journals', journals);
+    this.persistToServer('journals', journals, {
+      action: 'Journal Database Saved',
+      section: 'Technical Articles',
+      oldValue: 'Old posts archive',
+      newValue: `Total articles: ${journals.length}`,
+      description: 'Revised markdown articles, publish flags or tags.'
+    });
   }
 }
 

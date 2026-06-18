@@ -20,6 +20,8 @@ import { motion } from 'motion/react';
 import { PortfolioDB } from '../../utils/portfolioDb';
 
 export default function ContactView() {
+  const settings = PortfolioDB.getSettings();
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -36,7 +38,7 @@ export default function ContactView() {
   };
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText('contact@darshankumar.me');
+    navigator.clipboard.writeText(settings.contactEmail || 'contact@darshankumar.me');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -232,7 +234,7 @@ export default function ContactView() {
               <div className="space-y-1.5">
                 <span className="text-[10px] text-zinc-500 font-medium uppercase tracking-wider block">Direct Email Address</span>
                 <div className="flex items-center justify-between bg-zinc-950 p-3 rounded-xl border border-zinc-800">
-                  <span className="font-mono text-zinc-300 font-medium select-text">contact@darshankumar.me</span>
+                  <span className="font-mono text-zinc-300 font-medium select-text">{settings.contactEmail || 'contact@darshankumar.me'}</span>
                   <button
                     onClick={handleCopyEmail}
                     className="p-1 px-2 hover:bg-zinc-900 text-zinc-400 hover:text-white rounded-lg transition-colors flex items-center gap-1 cursor-pointer font-sans text-[10px]"
@@ -257,7 +259,7 @@ export default function ContactView() {
                 <span className="text-[10px] text-zinc-500 font-medium uppercase tracking-wider block">Office Location</span>
                 <div className="flex items-center gap-2 text-zinc-350 py-1 font-sans">
                   <MapPin className="w-4 h-4 text-zinc-500" />
-                  <span>Bengaluru, Karnataka, India</span>
+                  <span>{settings.location || 'Bengaluru, Karnataka, India'}</span>
                 </div>
               </div>
             </div>
@@ -273,14 +275,14 @@ export default function ContactView() {
               
               {/* LinkedIn */}
               <a 
-                href="https://www.linkedin.com/in/darshan-kumar-kr-905579284/" 
+                href={settings.linkedinUrl || "https://www.linkedin.com/in/darshan-kumar-kr-905579284/"} 
                 target="_blank" 
                 rel="noreferrer referrer" 
                 className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-zinc-950 border border-zinc-800 hover:border-zinc-700 transition-colors group"
               >
                 <div className="flex items-center gap-3">
                   <Linkedin className="w-4 h-4 text-[#0A66C2]" />
-                  <span className="font-medium text-zinc-350">LinkedIn Profile</span>
+                  <span className="font-medium text-zinc-355">LinkedIn Profile</span>
                 </div>
                 <div className="flex items-center gap-1 text-[10px] text-zinc-500 group-hover:text-white transition-colors">
                   <span>Connect</span>
@@ -290,7 +292,7 @@ export default function ContactView() {
 
               {/* GitHub */}
               <a 
-                href="https://github.com/darshankumar97" 
+                href={settings.githubUrl || "https://github.com/darshankumar97"} 
                 target="_blank" 
                 rel="noreferrer referrer" 
                 className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-zinc-950 border border-zinc-800 hover:border-zinc-700 transition-colors group"
@@ -307,7 +309,7 @@ export default function ContactView() {
 
               {/* LeetCode */}
               <a 
-                href="https://leetcode.com/u/DARSHAN_KUMAR_KR/" 
+                href={settings.leetcodeUrl || "https://leetcode.com/u/DARSHAN_KUMAR_KR/"} 
                 target="_blank" 
                 rel="noreferrer referrer" 
                 className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-zinc-950 border border-zinc-800 hover:border-zinc-700 transition-colors group"
@@ -325,7 +327,7 @@ export default function ContactView() {
               {/* Instagram - Less Prominent */}
               <div className="pt-2 border-t border-zinc-800/80 mt-2">
                 <a 
-                  href="https://instagram.com" 
+                  href={settings.instagramUrl || "https://instagram.com/darshankumarkr"} 
                   target="_blank" 
                   rel="noreferrer referrer" 
                   className="inline-flex items-center gap-1.5 text-[10px] text-zinc-500 hover:text-zinc-400 transition-colors py-1"

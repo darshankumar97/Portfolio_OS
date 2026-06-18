@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Handshake, 
   Target, 
@@ -20,6 +20,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { PortfolioDB } from '../../utils/portfolioDb';
 
 // Target Audience Categories
 const AUDIENCES = [
@@ -184,10 +185,33 @@ interface WorkViewProps {
 }
 
 export default function WorkView({ onOpenContactWithService }: WorkViewProps) {
+  const [servicesList, setServicesList] = useState<ServiceSpec[]>([]);
   const [activeServiceId, setActiveServiceId] = useState<string>('saas-mvp');
 
-  const selectedService = SERVICES_CATALOG.find(s => s.id === activeServiceId) || SERVICES_CATALOG[0];
-  const ActiveServiceIcon = selectedService.icon;
+  useEffect(() => {
+    const loaded = PortfolioDB.getServices();
+    if (loaded && loaded.length > 0) {
+      setServicesList(loaded as any);
+      setActiveServiceId(loaded[0].id);
+    } else {
+      setServicesList(SERVICES_CATALOG);
+      setActiveServiceId(SERVICES_CATALOG[0].id);
+    }
+  }, []);
+
+  const activeServices = servicesList && servicesList.length > 0 ? servicesList : SERVICES_CATALOG;
+  const selectedService = activeServices.find(s => s.id === activeServiceId) || activeServices[0];
+
+  const getSvcIcon = (id: string) => {
+    switch (id) {
+      case 'saas-mvp': return Sparkles;
+      case 'internal-tools': return Code2;
+      case 'dashboards': return Layout;
+      default: return Sparkles;
+    }
+  };
+
+  const ActiveServiceIcon = getSvcIcon(selectedService.id);
 
   const handleInquiryAction = () => {
     if (onOpenContactWithService) {
@@ -260,9 +284,9 @@ export default function WorkView({ onOpenContactWithService }: WorkViewProps) {
           </span>
           
           <div className="space-y-2">
-            {SERVICES_CATALOG.map((svc) => {
+            {activeServices.map((svc) => {
               const isActive = svc.id === activeServiceId;
-              const SvcTabIcon = svc.icon;
+              const SvcTabIcon = getSvcIcon(svc.id);
               return (
                 <button
                   key={svc.id}

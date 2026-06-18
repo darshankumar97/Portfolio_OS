@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   GitPullRequest, 
   Github, 
@@ -17,8 +17,26 @@ import {
   AlertCircle 
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { PortfolioDB } from '../../utils/portfolioDb';
 
 export default function OpenSourceView() {
+  const [contributions, setContributions] = useState<any[]>([]);
+
+  useEffect(() => {
+    const list = PortfolioDB.getOpenSource();
+    if (list && list.length > 0) {
+      setContributions(list);
+    }
+  }, []);
+
+  const activeContrib = contributions && contributions.length > 0 ? contributions[0] : null;
+  const projectName = activeContrib?.projectName || "Hindi Internationalization (i18n)";
+  const repoName = activeContrib?.repoName || "calcom/cal.com";
+  const summary = activeContrib?.contributionSummary || "Authored full localization, language maps, dynamic date formatters, and grammatical gender agreement utilities to bring native Hindi support to key developer platforms, opening tools to 600M+ native Hindi speakers globally.";
+  const pullRequestUrl = activeContrib?.pullRequestUrl || "https://github.com/calcom/cal.com";
+  const commitHash = activeContrib?.commitHash || "8f21bc9e4a3d76e2";
+  const impactMetric = activeContrib?.impactMetric || "600M+ Speakers";
+
   return (
     <div id="opensource-view-container" className="p-6 md:p-8 space-y-6 font-sans text-white select-none selection:bg-neutral-800">
       
@@ -46,7 +64,7 @@ export default function OpenSourceView() {
         </div>
       </div>
 
-      {/* HIGHLIGHT HEADER CARD: Hindi Internationalization (i18n) */}
+      { {/* HIGHLIGHT HEADER CARD: Hindi Internationalization (i18n) */} }
       <div className="relative overflow-hidden rounded-2xl border border-zinc-800 bg-[#0C0C0E] p-6 md:p-8 hover:border-zinc-700 transition-all">
         <div className="absolute inset-0 bg-gradient-to-r from-sky-500/5 via-transparent to-transparent z-0 pointer-events-none" />
         <div className="relative z-10 space-y-4">
@@ -58,21 +76,21 @@ export default function OpenSourceView() {
           </div>
 
           <h3 className="text-md md:text-lg font-bold text-white tracking-tight font-display">
-            Hindi Internationalization (i18n) Contribution
+            {projectName} Contribution
           </h3>
 
           <p className="text-xs text-zinc-300 leading-relaxed max-w-3xl">
-            Authored full localization, language maps, dynamic date formatters, and grammatical gender agreement utilities to bring native Hindi support to key developer platforms, opening tools to 600M+ native Hindi speakers globally.
+            {summary}
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
             <div className="space-y-0.5">
               <span className="text-[9px] font-mono text-zinc-550 uppercase tracking-widest block font-bold">Repository</span>
-              <span className="text-xs text-white font-mono font-medium">calcom/cal.com</span>
+              <span className="text-xs text-white font-mono font-medium">{repoName}</span>
             </div>
             <div className="space-y-0.5">
               <span className="text-[9px] font-mono text-zinc-550 uppercase tracking-widest block font-bold">Impact Metric</span>
-              <span className="text-xs text-emerald-400 font-mono font-bold">600M+ Speakers</span>
+              <span className="text-xs text-emerald-400 font-mono font-bold">{impactMetric}</span>
             </div>
             <div className="space-y-0.5">
               <span className="text-[9px] font-mono text-zinc-550 uppercase tracking-widest block font-bold">Contribution ID</span>
@@ -81,7 +99,7 @@ export default function OpenSourceView() {
             <div className="space-y-0.5">
               <span className="text-[9px] font-mono text-zinc-550 uppercase tracking-widest block font-bold">Pull Request Link</span>
               <a 
-                href="https://github.com/calcom/cal.com" 
+                href={pullRequestUrl} 
                 target="_blank" 
                 rel="noreferrer" 
                 className="text-xs text-blue-400 font-semibold font-sans hover:underline inline-flex items-center gap-1 cursor-pointer"

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Award, 
   Trophy, 
@@ -19,6 +19,7 @@ import {
   GitMerge
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { PortfolioDB } from '../../utils/portfolioDb';
 
 interface AchievementItem {
   id: string;
@@ -32,7 +33,7 @@ interface AchievementItem {
   tags: string[];
 }
 
-const ACHIEVEMENTS: AchievementItem[] = [
+const DEFAULT_ACHIEVEMENTS: AchievementItem[] = [
   {
     id: 'ach-ieee-pub',
     title: 'IEEE ICASI 2026 Publication',
@@ -91,10 +92,23 @@ const ACHIEVEMENTS: AchievementItem[] = [
 ];
 
 export default function AchievementsView() {
+  const [achievements, setAchievements] = useState<AchievementItem[]>([]);
   const [selectedAchId, setSelectedAchId] = useState<string>('ach-opensource');
   const [showConfettiEffect, setShowConfettiEffect] = useState<boolean>(false);
 
-  const selectedAch = ACHIEVEMENTS.find(a => a.id === selectedAchId) || ACHIEVEMENTS[0];
+  useEffect(() => {
+    const loaded = PortfolioDB.getAchievements();
+    if (loaded && loaded.length > 0) {
+      setAchievements(loaded as any);
+      setSelectedAchId(loaded[0].id);
+    } else {
+      setAchievements(DEFAULT_ACHIEVEMENTS);
+      setSelectedAchId(DEFAULT_ACHIEVEMENTS[0].id);
+    }
+  }, []);
+
+  const activeAchievements = achievements && achievements.length > 0 ? achievements : DEFAULT_ACHIEVEMENTS;
+  const selectedAch = activeAchievements.find(a => a.id === selectedAchId) || activeAchievements[0];
 
   const handleInteract = (id: string) => {
     setSelectedAchId(id);
@@ -145,7 +159,7 @@ export default function AchievementsView() {
           </span>
 
           <div className="space-y-2.5">
-            {ACHIEVEMENTS.map((ach) => {
+            {activeAchievements.map((ach) => {
               const isActive = ach.id === selectedAchId;
               const CardIcon = getIcon(ach.icon);
 

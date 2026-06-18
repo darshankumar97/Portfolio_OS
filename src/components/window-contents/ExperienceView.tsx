@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Briefcase, 
   MapPin, 
@@ -15,6 +15,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { PortfolioDB } from '../../utils/portfolioDb';
 
 interface ExperienceDetail {
   id: string;
@@ -29,7 +30,7 @@ interface ExperienceDetail {
   keyAchievement: string;
 }
 
-const EXPERIENCES: ExperienceDetail[] = [
+const DEFAULT_EXPERIENCES: ExperienceDetail[] = [
   {
     id: 'exp-cyber-intern',
     role: 'Cloud Security & Intrusion Detection Systems Intern',
@@ -65,9 +66,22 @@ const EXPERIENCES: ExperienceDetail[] = [
 ];
 
 export default function ExperienceView() {
+  const [experiences, setExperiences] = useState<ExperienceDetail[]>([]);
   const [selectedExpId, setSelectedExpId] = useState<string>('exp-cyber-intern');
 
-  const selectedExp = EXPERIENCES.find(e => e.id === selectedExpId) || EXPERIENCES[0];
+  useEffect(() => {
+    const loaded = PortfolioDB.getExperiences();
+    if (loaded && loaded.length > 0) {
+      setExperiences(loaded as any);
+      setSelectedExpId(loaded[0].id);
+    } else {
+      setExperiences(DEFAULT_EXPERIENCES);
+      setSelectedExpId(DEFAULT_EXPERIENCES[0].id);
+    }
+  }, []);
+
+  const activeExperiences = experiences && experiences.length > 0 ? experiences : DEFAULT_EXPERIENCES;
+  const selectedExp = activeExperiences.find(e => e.id === selectedExpId) || activeExperiences[0];
 
   return (
     <div id="experience-view-container" className="p-8 md:p-12 space-y-10 font-sans text-zinc-200 select-none selection:bg-zinc-800">
@@ -95,7 +109,7 @@ export default function ExperienceView() {
           </span>
 
           <div className="space-y-2">
-            {EXPERIENCES.map((exp) => {
+            {activeExperiences.map((exp) => {
               const isActive = exp.id === selectedExpId;
               return (
                 <button

@@ -37,7 +37,7 @@ import ReviewsView from './components/window-contents/ReviewsView';
 import AdminView from './components/window-contents/AdminView';
 import ChangelogView from './components/window-contents/ChangelogView';
 
-import { Terminal, ShieldAlert, Cpu, Activity, Clock, Sparkles, Code2, ArrowUpRight, LayoutGrid, MapPin, User, Star, ExternalLink, Mail } from 'lucide-react';
+import { Terminal, ShieldAlert, Cpu, Activity, Clock, Sparkles, Code2, ArrowUpRight, LayoutGrid, MapPin, User, Star, ExternalLink, Mail, Megaphone } from 'lucide-react';
 
 const INITIAL_WINDOWS: WindowInstance[] = [
   { id: 'projects', title: 'Featured Projects', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 10, x: 70, y: 50, width: 1080, height: 720 },
@@ -179,6 +179,11 @@ export default function App() {
   }, []);
 
   const handleLaunchWindow = (id: AppWindowId) => {
+    const disabledList = settings.disabledWindows ? settings.disabledWindows.split(',') : [];
+    if (disabledList.includes(id)) {
+      alert(`[DevOS Access Control] Operation Prohibited: The '${id}' module has been deactivated by the system administrator.`);
+      return;
+    }
     setWindows((prev) => {
       const maxZ = Math.max(...prev.map((win) => win.zIndex), 10);
       return prev.map((win) => {
@@ -191,7 +196,7 @@ export default function App() {
           };
         }
         return win;
-      });
+       });
     });
     setActiveWindowId(id);
   };
@@ -221,6 +226,11 @@ export default function App() {
   };
 
   const handleFocusWindow = (id: AppWindowId) => {
+    const disabledList = settings.disabledWindows ? settings.disabledWindows.split(',') : [];
+    if (disabledList.includes(id)) {
+      alert(`[DevOS Access Control] Operation Prohibited: The '${id}' module has been deactivated by the system administrator.`);
+      return;
+    }
     setWindows((prev) => {
       const maxZ = Math.max(...prev.map((win) => win.zIndex), 10);
       return prev.map((win) => {
@@ -313,6 +323,26 @@ export default function App() {
   const currentTheme = themeStyles[appearance.theme] || themeStyles.midnight;
   const isAnyWindowOpen = windows.some((win) => win.isOpen && !win.isMinimized);
 
+  const hiddenList = settings.hiddenDesktopIcons ? settings.hiddenDesktopIcons.split(',') : [];
+  const iconOrder = settings.desktopIconOrder ? settings.desktopIconOrder.split(',') : [];
+
+  const filterAndSortIcons = (icons: typeof PRIMARY_ICONS) => {
+    return icons
+      .filter((icon) => !hiddenList.includes(icon.id))
+      .sort((a, b) => {
+        const idxA = iconOrder.indexOf(a.id);
+        const idxB = iconOrder.indexOf(b.id);
+        if (idxA === -1 && idxB === -1) return 0;
+        if (idxA === -1) return 1;
+        if (idxB === -1) return -1;
+        return idxA - idxB;
+      });
+  };
+
+  const activePrimaryIcons = filterAndSortIcons(PRIMARY_ICONS);
+  const activeSecondaryIcons = filterAndSortIcons(SECONDARY_ICONS);
+  const activeUtilityIcons = filterAndSortIcons(UTILITY_ICONS);
+
   return (
     <AnimatePresence mode="wait">
       {isBooting ? (
@@ -356,19 +386,19 @@ export default function App() {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 font-sans tracking-[0.15em]" style={{ color: appearance.accentColor }}>
                 <div className="w-1.5 h-1.5 rounded-sm rotate-45" style={{ backgroundColor: appearance.accentColor }}></div>
-                <span className={`${currentTheme.logo} font-extrabold text-[12px] tracking-[0.2em]`}>DARSHAN KUMAR K R</span>
+                <span className={`${currentTheme.logo} font-extrabold text-[12px] tracking-[0.2em]`}>{settings.fullName?.toUpperCase() || "DARSHAN KUMAR K R"}</span>
               </div>
               <span className="text-zinc-700/40">|</span>
               <span className="hidden md:inline text-[8px] font-mono tracking-[0.18em] text-zinc-500 uppercase leading-none font-medium">
-                Systems Architect & Engineer
+                {settings.professionalTitle || "Systems Architect & Engineer"}
               </span>
             </div>
 
             {/* Active Alignment & Commands */}
             <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2 text-emerald-400">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
-                <span className="text-[9px] tracking-widest font-mono">AVAILABLE FOR ALLIANCE</span>
+              <div className={`flex items-center gap-2 ${settings.statusIndicatorColor === 'red' ? 'text-rose-455' : settings.statusIndicatorColor === 'amber' ? 'text-amber-400' : 'text-emerald-400'}`}>
+                <span className={`h-1.5 w-1.5 rounded-full ${settings.statusIndicatorColor === 'red' ? 'bg-rose-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' : settings.statusIndicatorColor === 'amber' ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]'}`}></span>
+                <span className="text-[9px] tracking-widest font-mono">{settings.statusIndicatorText || "AVAILABLE FOR ALLIANCE"}</span>
               </div>
               
               <div 
@@ -382,119 +412,147 @@ export default function App() {
           </header>          {/* Desktop Work Space */}
           <div id="desktop-grid-workplace" className="pt-20 pb-24 px-8 h-full w-full relative flex focus:outline-none z-[2]">
             
-            {/* Left Categorized Desktop Workspace Columns */}
+             {/* Left Categorized Desktop Workspace Columns */}
             <div className="flex flex-row gap-12 lg:gap-20 items-start h-[75%] z-[2] transition-all duration-300 pointer-events-auto select-none">
               
               {/* PRIMARY GROUP */}
-              <div className="flex flex-col gap-4">
-                <div className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-500 pb-1.5 border-b border-white/5 select-none opacity-80">
-                  // Portfolio Pillars
-                </div>
+              {activePrimaryIcons.length > 0 && (
                 <div className="flex flex-col gap-4">
-                  {PRIMARY_ICONS.map((icon) => {
-                    const targetWindow = windows.find((w) => w.id === icon.id);
-                    return (
-                      <DesktopIconItem
-                        key={icon.id}
-                        id={icon.id}
-                        label={icon.label}
-                        iconName={icon.iconName}
-                        onClick={handleLaunchWindow}
-                        isOpen={targetWindow?.isOpen ?? false}
-                        dimmed={isAnyWindowOpen}
-                      />
-                    );
-                  })}
+                  <div className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-500 pb-1.5 border-b border-white/5 select-none opacity-80">
+                    // Portfolio Pillars
+                  </div>
+                  <div className="flex flex-col gap-4">
+                    {activePrimaryIcons.map((icon) => {
+                      const targetWindow = windows.find((w) => w.id === icon.id);
+                      return (
+                        <DesktopIconItem
+                          key={icon.id}
+                          id={icon.id}
+                          label={icon.label}
+                          iconName={icon.iconName}
+                          onClick={handleLaunchWindow}
+                          isOpen={targetWindow?.isOpen ?? false}
+                          dimmed={isAnyWindowOpen}
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* SECONDARY GROUP */}
-              <div className="flex flex-col gap-4">
-                <div className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-500 pb-1.5 border-b border-white/5 select-none opacity-80">
-                  // Core Methods
-                </div>
+              {activeSecondaryIcons.length > 0 && (
                 <div className="flex flex-col gap-4">
-                  {SECONDARY_ICONS.map((icon) => {
-                    const targetWindow = windows.find((w) => w.id === icon.id);
-                    return (
-                      <DesktopIconItem
-                        key={icon.id}
-                        id={icon.id}
-                        label={icon.label}
-                        iconName={icon.iconName}
-                        onClick={handleLaunchWindow}
-                        isOpen={targetWindow?.isOpen ?? false}
-                        dimmed={isAnyWindowOpen}
-                      />
-                    );
-                  })}
+                  <div className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-500 pb-1.5 border-b border-white/5 select-none opacity-80">
+                    // Core Methods
+                  </div>
+                  <div className="flex flex-col gap-4">
+                    {activeSecondaryIcons.map((icon) => {
+                      const targetWindow = windows.find((w) => w.id === icon.id);
+                      return (
+                        <DesktopIconItem
+                          key={icon.id}
+                          id={icon.id}
+                          label={icon.label}
+                          iconName={icon.iconName}
+                          onClick={handleLaunchWindow}
+                          isOpen={targetWindow?.isOpen ?? false}
+                          dimmed={isAnyWindowOpen}
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* UTILITY GROUP */}
-              <div className="flex flex-col gap-4">
-                <div className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-500 pb-1.5 border-b border-white/5 select-none opacity-80">
-                  // Connection & Admin
-                </div>
+              {activeUtilityIcons.length > 0 && (
                 <div className="flex flex-col gap-4">
-                  {UTILITY_ICONS.map((icon) => {
-                    const targetWindow = windows.find((w) => w.id === icon.id);
-                    return (
-                      <DesktopIconItem
-                        key={icon.id}
-                        id={icon.id}
-                        label={icon.label}
-                        iconName={icon.iconName}
-                        onClick={handleLaunchWindow}
-                        isOpen={targetWindow?.isOpen ?? false}
-                        dimmed={isAnyWindowOpen}
-                      />
-                    );
-                  })}
+                  <div className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-500 pb-1.5 border-b border-white/5 select-none opacity-80">
+                    // Connection & Admin
+                  </div>
+                  <div className="flex flex-col gap-4">
+                    {activeUtilityIcons.map((icon) => {
+                      const targetWindow = windows.find((w) => w.id === icon.id);
+                      return (
+                        <DesktopIconItem
+                          key={icon.id}
+                          id={icon.id}
+                          label={icon.label}
+                          iconName={icon.iconName}
+                          onClick={handleLaunchWindow}
+                          isOpen={targetWindow?.isOpen ?? false}
+                          dimmed={isAnyWindowOpen}
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
 
             </div>
 
-            {/* Bento Grid Live Desktop Widgets Workspace Dashboard (CMS-editable! Priority 9 & Priority 2) */}
+             {/* Bento Grid Live Desktop Widgets Workspace Dashboard (CMS-editable! Priority 9 & Priority 2) */}
             <div className={`absolute right-8 top-20 bottom-24 w-[340px] xl:w-[380px] hidden lg:flex flex-col gap-4 text-left z-[2] overflow-y-auto pr-1 transition-all duration-300
               ${isAnyWindowOpen ? 'opacity-[0.85] brightness-[0.92]' : 'opacity-100'}
             `}>
               {/* Card 1: Main Greetings */}
-              <div className="bg-black/20 border border-white/5 p-5 rounded-2xl backdrop-blur-md space-y-3.5">
-                <div className="flex items-center gap-2 text-zinc-400 font-mono text-[8px] uppercase tracking-wider">
-                  <Sparkles className="w-3.5 h-3.5 text-blue-500" />
-                  <span>{settings.desktopWelcome || "DevOS Live Central Operator"}</span>
-                </div>
-                <div className="space-y-1">
-                  <h1 className="text-2xl font-extrabold tracking-tight text-white font-sans leading-none">
-                    {settings.heroTitle || "Darshan Kumar K R"}
-                  </h1>
-                  <p className="text-zinc-500 font-mono text-[8.5px] uppercase tracking-[0.16em] leading-normal pt-1 flex items-center gap-1.5 font-semibold">
-                    <span className="inline-block w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
-                    {settings.heroSubtitle || "Systems Architect & Cloud Security"}
+              {(settings.showGreetingsWidget ?? true) && (
+                <div className="bg-black/20 border border-white/5 p-5 rounded-2xl backdrop-blur-md space-y-3.5">
+                  <div className="flex items-center gap-2 text-zinc-400 font-mono text-[8px] uppercase tracking-wider">
+                    <Sparkles className="w-3.5 h-3.5 text-blue-500" />
+                    <span>{settings.desktopWelcome || "DevOS Live Central Operator"}</span>
+                  </div>
+                  <div className="space-y-1">
+                    <h1 className="text-2xl font-extrabold tracking-tight text-white font-sans leading-none">
+                      {settings.heroTitle || "Darshan Kumar K R"}
+                    </h1>
+                    <p className="text-zinc-500 font-mono text-[8.5px] uppercase tracking-[0.16em] leading-normal pt-1 flex items-center gap-1.5 font-semibold">
+                      <span className="inline-block w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                      {settings.heroSubtitle || "Systems Architect & Cloud Security"}
+                    </p>
+                  </div>
+                  <p className="text-zinc-400 text-[11px] leading-relaxed select-text font-medium opacity-90">
+                    {settings.heroText || "I engineer robust distributed infrastructures, develop deep learning threat intelligence classifiers, and build secure systems pipelines."}
                   </p>
                 </div>
-                <p className="text-zinc-400 text-[11px] leading-relaxed select-text font-medium opacity-90">
-                  {settings.heroText || "I engineer robust distributed infrastructures, develop deep learning threat intelligence classifiers, and build secure systems pipelines."}
-                </p>
-              </div>
+              )}
 
               {/* Card 2: Current Focus Status Indicator */}
-              <div className="bg-black/20 border border-white/5 p-5 rounded-2xl backdrop-blur-md space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-zinc-400 font-mono text-[8px] uppercase tracking-wider">
-                    <Activity className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
-                    <span>LATEST CORE FOCUS OBJECTS</span>
+              {(settings.showFocusWidget ?? true) && (
+                <div className="bg-black/20 border border-white/5 p-5 rounded-2xl backdrop-blur-md space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-zinc-400 font-mono text-[8px] uppercase tracking-wider">
+                      <Activity className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
+                      <span>LATEST CORE FOCUS OBJECTS</span>
+                    </div>
+                    <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono text-[7px] px-1.5 py-0.5 rounded leading-none uppercase tracking-wider font-bold">
+                      ACTIVE
+                    </span>
                   </div>
-                  <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono text-[7px] px-1.5 py-0.5 rounded leading-none uppercase tracking-wider font-bold">
-                    ACTIVE
-                  </span>
+                  <p className="text-zinc-350 text-[11px] font-sans leading-relaxed select-text font-medium opacity-90">
+                    {settings.currentFocusWidget || "Cloud Security Research, Container Orchestration Lab, & Enterprise CMS Deployments"}
+                  </p>
                 </div>
-                <p className="text-zinc-350 text-[11px] font-sans leading-relaxed select-text font-medium opacity-90">
-                  {settings.currentFocusWidget || "Cloud Security Research, Container Orchestration Lab, & Enterprise CMS Deployments"}
-                </p>
-              </div>
+              )}
+
+              {/* Card 3: Announcement Widget */}
+              {settings.showAnnouncementWidget && (
+                <div className="bg-amber-500/5 border border-amber-500/10 p-5 rounded-2xl backdrop-blur-md space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-amber-500 font-mono text-[8px] uppercase tracking-wider">
+                      <Megaphone className="w-3.5 h-3.5 text-amber-500 animate-bounce" />
+                      <span>SYSTEM ANNOUNCEMENT Banner</span>
+                    </div>
+                    <span className="bg-amber-500/10 border border-amber-500/20 text-amber-500 font-mono text-[7px] px-1.5 py-0.5 rounded leading-none uppercase tracking-wider font-bold">
+                      INFO
+                    </span>
+                  </div>
+                  <p className="text-amber-200/90 text-[11px] font-sans leading-relaxed select-text font-medium">
+                    {settings.announcementText || "All systems normalized. Safe connection established."}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Subtle Desktop Backdrop Overlay when window is open */}
@@ -544,6 +602,7 @@ export default function App() {
             onIconClick={handleFocusWindow}
             onOpenCommandPalette={() => setPaletteOpen(true)}
             onClearDesktop={handleClearWorkspace}
+            settings={settings}
           />
 
           {/* Keyboard bindings accessible Command Palette */}

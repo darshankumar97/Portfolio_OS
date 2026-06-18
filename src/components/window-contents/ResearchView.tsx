@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   FileText, 
   Layers, 
@@ -25,6 +25,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { PortfolioDB } from '../../utils/portfolioDb';
 
 // Core Dataset stats mock representation
 const MARKETPLACE_CATEGORIES = [
@@ -74,11 +75,27 @@ const JOURNEY_TIMELINES = [
 ];
 
 export default function ResearchView() {
+  const [researchList, setResearchList] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<'overview' | 'methodology' | 'findings' | 'journey'>('overview');
   const [selectedListingCategory, setSelectedListingCategory] = useState<number | null>(null);
   const [methodologyStep, setMethodologyStep] = useState(0);
 
-  const linkedInPostUrl = "https://www.linkedin.com/posts/darshan-kumar-kr-905579284_excited-to-share-that-our-research-paper-ugcPost-7453106469220073472-Ugek/";
+  useEffect(() => {
+    const list = PortfolioDB.getResearch();
+    if (list && list.length > 0) {
+      setResearchList(list);
+    }
+  }, []);
+
+  const activePaper = researchList && researchList.length > 0 ? researchList[0] : null;
+  const activeTimeline = activePaper?.timeline || JOURNEY_TIMELINES;
+  const activeStatistics = activePaper?.statistics || MARKETPLACE_CATEGORIES;
+  const activeTitle = activePaper?.title || "Vendor Profiling & Behaviour Analysis in Dark Web Marketplaces";
+  const activeAbstract = activePaper?.abstract || "Multi-platform encrypted commerce portals, operating under Tor routing layers, present deep challenges to cybersecurity analysts due to complete pseudonymity. This research introduces a holistic, automated stylometric and behavioral ingestion model designed to trace, map, and correlate vendor dossiers across disparate marketplaces.";
+  const activeConference = activePaper?.conference || "IEEE International Conference on Applied System Innovation (ICASI) 2026";
+  const activeLink = activePaper?.publicationLink || "https://www.linkedin.com/posts/darshan-kumar-kr-905579284_excited-to-share-that-our-research-paper-ugcPost-7453106469220073472-Ugek/";
+
+  const linkedInPostUrl = activeLink;
 
   const pipelineSteps = [
     { title: 'Ingestion', icon: Server, desc: 'Tor-proxy rotation pipeline crawling Tor addresses to scrape marketplace listings and forum threads safely.', status: 'Inactive - Offline' },
@@ -189,11 +206,11 @@ export default function ResearchView() {
                   </span>
                   
                   <h3 className="text-base font-semibold text-zinc-100 font-display">
-                    Vendor Profiling & Behaviour Analysis in Dark Web Marketplaces
+                    {activeTitle}
                   </h3>
 
                   <p className="text-xs text-zinc-350 leading-relaxed font-sans">
-                    Multi-platform encrypted commerce portals, operating under Tor routing layers, present deep challenges to cybersecurity analysts due to complete pseudonymity. This research introduces a holistic, automated stylometric and behavioral ingestion model designed to trace, map, and correlate vendor dossiers across disparate marketplaces.
+                    {activeAbstract}
                   </p>
                   
                   <p className="text-xs text-zinc-400 leading-relaxed font-sans block">
@@ -261,7 +278,7 @@ export default function ResearchView() {
 
                     <div className="space-y-2">
                       <div className="text-[10px] text-zinc-500 uppercase font-mono">Conference</div>
-                      <div className="text-xs text-white font-semibold">IEEE International Conference on Applied System Innovation (ICASI) 2026</div>
+                      <div className="text-xs text-white font-semibold">{activeConference}</div>
                     </div>
 
                     <div className="space-y-2">
@@ -418,7 +435,7 @@ export default function ResearchView() {
                     </p>
 
                     <div className="space-y-3">
-                      {MARKETPLACE_CATEGORIES.map((cat, idx) => {
+                      {activeStatistics.map((cat, idx) => {
                         const isSelected = selectedListingCategory === idx;
                         return (
                           <div 
@@ -487,7 +504,7 @@ export default function ResearchView() {
               className="space-y-6"
             >
               <div className="relative border-l border-zinc-800 pl-6 space-y-6 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar text-left">
-                {JOURNEY_TIMELINES.map((tl, i) => (
+                {activeTimeline.map((tl, i) => (
                   <div key={i} className="relative">
                     <span className="absolute -left-[31px] top-1.5 h-3.5 w-3.5 rounded-full bg-black border-2 border-orange-500 flex items-center justify-center">
                       <span className="h-1.5 w-1.5 bg-orange-400 rounded-full" />
