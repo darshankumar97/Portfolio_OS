@@ -1,0 +1,35 @@
+[
+  {
+    "id": "web-platforms",
+    "title": "Web Platforms",
+    "description": "Full-stack web applications — from architecture to deployment.",
+    "deliverables": [
+      "Next.js / React applications",
+      "REST & GraphQL APIs",
+      "Database design & migrations",
+      "Performance optimization"
+    ]
+  },
+  {
+    "id": "backend-systems",
+    "title": "Backend Systems",
+    "description": "Reliable services built for scale, observability, and long-term maintainability.",
+    "deliverables": [
+      "Microservices & event-driven systems",
+      "Cloud infrastructure setup",
+      "CI/CD pipelines",
+      "Monitoring & alerting"
+    ]
+  },
+  {
+    "id": "technical-consulting",
+    "title": "Technical Consulting",
+    "description": "Architecture reviews, codebase audits, and strategic engineering guidance.",
+    "deliverables": [
+      "System design reviews",
+      "Technical due diligence",
+      "Roadmap & stack recommendations",
+      "Team process improvements"
+    ]
+  }
+]

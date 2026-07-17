@@ -1,0 +1,21 @@
+[
+  {
+    "id": "proj-1",
+    "slug": "example-project",
+    "title": "TODO: Project title",
+    "tagline": "TODO: One-line description of what it is",
+    "description": "TODO: Two to three sentences describing the project overall.",
+    "problem": "TODO: What problem did this solve?",
+    "solution": "TODO: How did you solve it?",
+    "impact": [
+      "TODO: A concrete, quantified outcome",
+      "TODO: Another outcome"
+    ],
+    "technologies": ["TODO", "TODO", "TODO"],
+    "category": "product",
+    "status": "in-progress",
+    "featured": true,
+    "links": {},
+    "metrics": []
+  }
+]

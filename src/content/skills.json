@@ -1,0 +1,45 @@
+[
+  {
+    "id": "languages",
+    "name": "Languages",
+    "skills": [
+      { "name": "TypeScript", "level": "expert" },
+      { "name": "JavaScript", "level": "expert" },
+      { "name": "Python", "level": "expert" },
+      { "name": "Go", "level": "proficient" },
+      { "name": "Rust", "level": "familiar" }
+    ]
+  },
+  {
+    "id": "frontend",
+    "name": "Frontend",
+    "skills": [
+      { "name": "React", "level": "expert" },
+      { "name": "Next.js", "level": "expert" },
+      { "name": "Tailwind CSS", "level": "expert" },
+      { "name": "Framer Motion", "level": "proficient" }
+    ]
+  },
+  {
+    "id": "backend",
+    "name": "Backend & Data",
+    "skills": [
+      { "name": "Node.js", "level": "expert" },
+      { "name": "FastAPI", "level": "proficient" },
+      { "name": "PostgreSQL", "level": "expert" },
+      { "name": "Redis", "level": "proficient" },
+      { "name": "MongoDB", "level": "proficient" }
+    ]
+  },
+  {
+    "id": "infrastructure",
+    "name": "Infrastructure",
+    "skills": [
+      { "name": "AWS", "level": "proficient" },
+      { "name": "Docker", "level": "expert" },
+      { "name": "Kubernetes", "level": "proficient" },
+      { "name": "CI/CD", "level": "expert" },
+      { "name": "Observability", "level": "proficient" }
+    ]
+  }
+]

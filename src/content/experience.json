@@ -1,0 +1,18 @@
+[
+  {
+    "id": "exp-1",
+    "company": "TODO: Company name",
+    "role": "TODO: Your role/title",
+    "period": "TODO: e.g. 2023 — Present",
+    "location": "TODO: e.g. Remote",
+    "type": "full-time",
+    "description": "TODO: One or two sentences on scope and responsibility for this role.",
+    "achievements": [
+      "TODO: A concrete, quantified achievement",
+      "TODO: Another achievement",
+      "TODO: Another achievement"
+    ],
+    "technologies": ["TODO", "TODO", "TODO"],
+    "featured": true
+  }
+]

@@ -1,0 +1,32 @@
+{
+  "name": "Darshan Kumar K R",
+  "title": "Software Engineer",
+  "headline": "I build software systems that ship, scale, and hold up under real-world pressure.",
+  "subheadline": "Engineering-first builder focused on product quality, system design, and measurable outcomes — for teams hiring, founders scaling, and clients who need reliable delivery.",
+  "location": "India",
+  "email": "hello@darshankumar.me",
+  "availability": "Open to full-time roles, selective freelance, and founder collaborations",
+  "bio": "I'm a software engineer who treats every project like a product — clear architecture, disciplined execution, and outcomes that matter. I work across the stack with a bias toward reliability, performance, and maintainability. Whether it's a zero-to-one startup build, a complex backend system, or research translated into production code, I focus on engineering depth that compounds over time.",
+  "highlights": [
+    { "label": "Focus", "value": "Systems & Product Engineering" },
+    { "label": "Approach", "value": "Ship fast, engineer right" },
+    { "label": "Stack", "value": "TypeScript · Python · Cloud-native" }
+  ],
+  "audiences": [
+    {
+      "id": "hiring",
+      "title": "For hiring teams",
+      "description": "Production-grade engineering with clear communication, strong fundamentals, and a track record of owning features end-to-end."
+    },
+    {
+      "id": "founders",
+      "title": "For startup founders",
+      "description": "A technical partner who can move from architecture to deployment — helping you validate ideas and build durable foundations early."
+    },
+    {
+      "id": "clients",
+      "title": "For freelance clients",
+      "description": "Scoped engagements with transparent delivery — web platforms, APIs, integrations, and performance work done with product sensibility."
+    }
+  ]
+}

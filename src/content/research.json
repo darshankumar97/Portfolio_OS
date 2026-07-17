@@ -1,0 +1,14 @@
+[
+  {
+    "id": "res-1",
+    "title": "TODO: Paper/talk title",
+    "venue": "TODO: Venue or publisher",
+    "year": "TODO",
+    "type": "paper",
+    "abstract": "TODO: Short abstract or summary.",
+    "authors": ["TODO: Author name(s)"],
+    "links": {},
+    "tags": ["TODO", "TODO"],
+    "featured": true
+  }
+]
