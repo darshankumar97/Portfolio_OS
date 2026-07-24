@@ -3,8 +3,8 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
 import { getFeaturedExperience } from "@/lib/content";
 
-export function Experience() {
-  const experience = getFeaturedExperience();
+export async function Experience() {
+  const experience = await getFeaturedExperience();
 
   return (
     <section id="experience" className="section-padding">

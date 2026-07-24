@@ -3,8 +3,8 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Card } from "@/components/ui/Card";
 import { getServices } from "@/lib/content";
 
-export function Services() {
-  const services = getServices();
+export async function Services() {
+  const services = await getServices();
 
   return (
     <section id="services" className="section-padding">

@@ -6,8 +6,7 @@ export const contentType = "image/png";
 export const alt = "DevOS — Darshan Kumar K R";
 
 export default async function OpengraphImage() {
-  const site = getSiteConfig();
-  const profile = getProfile();
+  const [site, profile] = await Promise.all([getSiteConfig(), getProfile()]);
 
   return new ImageResponse(
     (

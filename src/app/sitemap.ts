@@ -1,9 +1,8 @@
 import type { MetadataRoute } from "next";
-import { getSiteConfig, getProjects } from "@/lib/content";
+import { getSiteConfig, getProjects, getBlogPosts } from "@/lib/content";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const site = getSiteConfig();
-  const projects = getProjects();
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [site, projects, posts] = await Promise.all([getSiteConfig(), getProjects(), getBlogPosts()]);
 
   const projectUrls = projects.map((project) => ({
     url: `${site.url}/projects/${project.slug}`,
@@ -11,6 +10,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "monthly" as const,
     priority: 0.8,
   }));
+
+  const blogUrls = posts
+    .filter((post) => !post.externalUrl)
+    .map((post) => ({
+      url: `${site.url}/blog/${post.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    }));
 
   return [
     {
@@ -20,5 +28,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     ...projectUrls,
+    ...blogUrls,
   ];
 }

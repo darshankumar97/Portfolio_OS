@@ -5,8 +5,8 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { getFeaturedProjects } from "@/lib/content";
 
-export function Projects() {
-  const projects = getFeaturedProjects();
+export async function Projects() {
+  const projects = await getFeaturedProjects();
 
   return (
     <section id="work" className="section-padding border-t border-border bg-surface-elevated">

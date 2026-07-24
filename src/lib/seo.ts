@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { getSiteConfig, getProfile } from "./content";
 
-export function createMetadata(overrides?: Partial<Metadata>): Metadata {
-  const site = getSiteConfig();
-  const profile = getProfile();
+export async function createMetadata(overrides?: Partial<Metadata>): Promise<Metadata> {
+  const site = await getSiteConfig();
+  const profile = await getProfile();
 
   return {
     metadataBase: new URL(site.url),

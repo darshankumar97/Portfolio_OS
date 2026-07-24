@@ -1,0 +1,311 @@
+// Prisma schema for DevOS — single source of truth for all portfolio content.
+// Run `npx prisma migrate dev` after setting DATABASE_URL / DIRECT_URL in .env.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------- Enums ----------
+
+enum ExperienceType {
+  full_time
+  contract
+  internship
+  research
+}
+
+enum ProjectCategory {
+  product
+  research
+  open_source
+  freelance
+}
+
+enum ProjectStatus {
+  live
+  in_progress
+  archived
+}
+
+enum ResearchType {
+  paper
+  thesis
+  preprint
+  talk
+}
+
+enum SocialIcon {
+  github
+  linkedin
+  twitter
+  email
+  scholar
+  medium
+}
+
+enum MediaType {
+  image
+  video
+  document
+}
+
+// ---------- Singletons ----------
+
+model Profile {
+  id           String   @id @default("singleton")
+  name         String
+  title        String
+  headline     String
+  subheadline  String
+  location     String
+  email        String
+  availability String
+  bio          String
+  avatarUrl    String?
+  /// Highlight[] — [{ label, value }]
+  highlights   Json     @default("[]")
+  /// Audience[] — [{ id, title, description }]
+  audiences    Json     @default("[]")
+  updatedAt    DateTime @updatedAt
+}
+
+model SiteSettings {
+  id          String   @id @default("singleton")
+  name        String
+  tagline     String
+  domain      String
+  url         String
+  description String
+  /// string[]
+  keywords    Json     @default("[]")
+  locale      String
+  resumeUrl   String?
+  ogImageUrl  String?
+  analyticsId String?
+  updatedAt   DateTime @updatedAt
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+// ---------- Ordered collections ----------
+
+model NavigationItem {
+  id        String   @id @default(cuid())
+  label     String
+  href      String
+  order     Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SocialLink {
+  id        String     @id @default(cuid())
+  label     String
+  url       String
+  icon      SocialIcon
+  order     Int        @default(0)
+  published Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Experience {
+  id           String         @id @default(cuid())
+  company      String
+  role         String
+  period       String
+  location     String
+  type         ExperienceType
+  description  String
+  /// string[]
+  achievements Json           @default("[]")
+  /// string[]
+  technologies Json           @default("[]")
+  featured     Boolean        @default(false)
+  published    Boolean        @default(true)
+  order        Int            @default(0)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+model Project {
+  id           String          @id @default(cuid())
+  slug         String          @unique
+  title        String
+  tagline      String
+  description  String
+  problem      String
+  solution     String
+  /// string[]
+  impact       Json            @default("[]")
+  /// string[]
+  technologies Json            @default("[]")
+  category     ProjectCategory
+  status       ProjectStatus   @default(in_progress)
+  featured     Boolean         @default(false)
+  published    Boolean         @default(true)
+  order        Int             @default(0)
+  /// { live?, github?, paper?, demo? }
+  links        Json            @default("{}")
+  /// { label, value }[]
+  metrics      Json            @default("[]")
+  /// { url, alt }[]
+  gallery      Json            @default("[]")
+  coverImage   String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+}
+
+model Research {
+  id        String       @id @default(cuid())
+  title     String
+  venue     String
+  year      String
+  type      ResearchType
+  abstract  String
+  /// string[]
+  authors   Json         @default("[]")
+  /// { pdf?, doi?, arxiv?, slides? }
+  links     Json         @default("{}")
+  /// string[]
+  tags      Json         @default("[]")
+  featured  Boolean      @default(false)
+  published Boolean      @default(true)
+  order     Int          @default(0)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model SkillCategory {
+  id        String   @id @default(cuid())
+  name      String
+  order     Int      @default(0)
+  published Boolean  @default(true)
+  /// { name, level? }[]
+  skills    Json     @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Service {
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  /// string[]
+  deliverables Json     @default("[]")
+  order        Int      @default(0)
+  published    Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Education {
+  id          String   @id @default(cuid())
+  institution String
+  degree      String
+  field       String?
+  period      String
+  location    String?
+  description String?
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Certification {
+  id            String   @id @default(cuid())
+  name          String
+  issuer        String
+  issueDate     String
+  credentialUrl String?
+  order         Int      @default(0)
+  published     Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  date        String?
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  company   String?
+  quote     String
+  avatarUrl String?
+  order     Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BlogPost {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       String
+  excerpt     String
+  content     String?
+  externalUrl String?
+  coverImage  String?
+  /// string[]
+  tags        Json      @default("[]")
+  order       Int       @default(0)
+  published   Boolean   @default(true)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// ---------- Media & appearance ----------
+
+model MediaAsset {
+  id        String    @id @default(cuid())
+  url       String
+  path      String
+  type      MediaType
+  filename  String
+  size      Int
+  width     Int?
+  height    Int?
+  createdAt DateTime  @default(now())
+}
+
+model Wallpaper {
+  id        String   @id @default(cuid())
+  label     String
+  gradient  String?
+  imageUrl  String?
+  order     Int      @default(0)
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Accent {
+  id        String   @id @default(cuid())
+  label     String
+  value     String
+  order     Int      @default(0)
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

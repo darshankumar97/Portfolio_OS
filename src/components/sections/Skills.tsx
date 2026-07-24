@@ -3,8 +3,8 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
 import { getSkills } from "@/lib/content";
 
-export function Skills() {
-  const categories = getSkills();
+export async function Skills() {
+  const categories = await getSkills();
 
   return (
     <section id="skills" className="section-padding border-t border-border bg-surface-elevated">

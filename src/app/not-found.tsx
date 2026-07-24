@@ -1,15 +1,15 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
 
+// Fallback for routes outside the (site) group (e.g. unmatched /admin/* paths).
+// The public-facing 404 with full Header/Footer chrome lives at (site)/not-found.tsx.
 export default function NotFound() {
   return (
-    <div className="section-padding container-narrow flex min-h-[60vh] flex-col items-start justify-center pt-28 pb-20">
+    <div className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-surface px-4 text-center">
       <p className="text-sm font-medium text-accent">404</p>
-      <h1 className="mt-2 text-2xl font-semibold text-foreground">Page not found</h1>
-      <p className="mt-2 text-muted">The page you&apos;re looking for doesn&apos;t exist.</p>
-      <div className="mt-6">
-        <Button href="/">Back home</Button>
-      </div>
+      <h1 className="text-2xl font-semibold text-foreground">Page not found</h1>
+      <Link href="/" className="text-sm text-muted underline-offset-4 hover:underline">
+        Back home
+      </Link>
     </div>
   );
 }

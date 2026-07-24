@@ -3,8 +3,8 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Card } from "@/components/ui/Card";
 import { getProfile } from "@/lib/content";
 
-export function About() {
-  const profile = getProfile();
+export async function About() {
+  const profile = await getProfile();
 
   return (
     <section id="about" className="section-padding border-t border-border bg-surface-elevated">

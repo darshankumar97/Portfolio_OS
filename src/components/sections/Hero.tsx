@@ -1,14 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { getProfile, getSiteConfig } from "@/lib/content";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import type { Profile, SiteConfig } from "@/types/content";
 
-export function Hero() {
-  const profile = getProfile();
-  const site = getSiteConfig();
+interface HeroProps {
+  profile: Profile;
+  site: SiteConfig;
+}
 
+export function Hero({ profile, site }: HeroProps) {
   return (
     <section className="section-padding container-wide pt-32 pb-20 sm:pt-40 sm:pb-28">
       <div className="max-w-3xl">

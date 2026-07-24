@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 @theme {
   --color-surface: #fafafa;
   --color-surface-elevated: #ffffff;
@@ -9,10 +11,22 @@
   --color-muted: #737373;
   --color-muted-light: #a3a3a3;
   --color-accent: #2563eb;
-  --color-accent-hover: #1d4ed8;
-  --color-accent-subtle: #eff6ff;
+  --color-accent-hover: color-mix(in srgb, var(--color-accent) 85%, black);
+  --color-accent-subtle: color-mix(in srgb, var(--color-accent) 12%, white);
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+.dark {
+  --color-surface: #050505;
+  --color-surface-elevated: #17171a;
+  --color-border: #2b2b2e;
+  --color-border-subtle: #1e1e21;
+  --color-foreground: #f5f5f5;
+  --color-muted: #a1a1aa;
+  --color-muted-light: #71717a;
+  --color-accent-hover: color-mix(in srgb, var(--color-accent) 80%, white);
+  --color-accent-subtle: color-mix(in srgb, var(--color-accent) 20%, black);
 }
 
 @layer base {

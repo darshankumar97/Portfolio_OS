@@ -4,8 +4,8 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { getFeaturedResearch } from "@/lib/content";
 
-export function Research() {
-  const research = getFeaturedResearch();
+export async function Research() {
+  const research = await getFeaturedResearch();
 
   return (
     <section id="research" className="section-padding">

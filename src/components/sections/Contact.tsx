@@ -2,9 +2,8 @@ import { FadeIn } from "@/components/motion/FadeIn";
 import { Button } from "@/components/ui/Button";
 import { getProfile, getSocialLinks } from "@/lib/content";
 
-export function Contact() {
-  const profile = getProfile();
-  const social = getSocialLinks();
+export async function Contact() {
+  const [profile, social] = await Promise.all([getProfile(), getSocialLinks()]);
 
   return (
     <section id="contact" className="section-padding border-t border-border bg-surface-elevated">

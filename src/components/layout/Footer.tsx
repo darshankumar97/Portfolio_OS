@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { getSiteConfig, getProfile, getSocialLinks } from "@/lib/content";
 
-export function Footer() {
-  const site = getSiteConfig();
-  const profile = getProfile();
-  const social = getSocialLinks();
+export async function Footer() {
+  const [site, profile, social] = await Promise.all([
+    getSiteConfig(),
+    getProfile(),
+    getSocialLinks(),
+  ]);
   const year = new Date().getFullYear();
 
   return (
