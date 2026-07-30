@@ -48,6 +48,12 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL }}
 
+      - name: Verify schema landed in the app's database
+        run: pnpm run verify:schema
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+
       - name: Seed Database
         run: npx prisma db seed
         env:

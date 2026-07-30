@@ -38,3 +38,6 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# one-time export of the old (pre-Prisma) Supabase schema's contact data — contains real PII
+/legacy-schema-export
