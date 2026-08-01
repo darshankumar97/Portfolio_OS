@@ -2,9 +2,6 @@
 // npm install --save-dev prisma dotenv
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
-import { assertSameSupabaseProject } from "./prisma/lib/assert-db-target";
-
-assertSameSupabaseProject(process.env["DATABASE_URL"], process.env["DIRECT_URL"]);
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
@@ -12,10 +9,7 @@ export default defineConfig({
     path: "prisma/migrations",
     seed: "tsx prisma/seed.ts",
   },
-  // Migrate/introspection need a direct (non-pooled) connection — Supabase's
-  // pgbouncer pooler (used by DATABASE_URL at runtime) doesn't support the
-  // advisory locks Migrate relies on.
   datasource: {
-    url: process.env["DIRECT_URL"] ?? process.env["DATABASE_URL"],
+    url: process.env["DATABASE_URL"],
   },
 });

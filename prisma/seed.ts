@@ -7,7 +7,6 @@ import "dotenv/config";
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { assertSameSupabaseProject } from "./lib/assert-db-target";
 
 import site from "../src/content/site.json";
 import profile from "../src/content/profile.json";
@@ -18,8 +17,6 @@ import skills from "../src/content/skills.json";
 import social from "../src/content/social.json";
 import services from "../src/content/services.json";
 import navigation from "../src/content/navigation.json";
-
-assertSameSupabaseProject(process.env.DATABASE_URL, process.env.DIRECT_URL);
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const db = new PrismaClient({ adapter });

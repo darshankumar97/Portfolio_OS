@@ -12,7 +12,7 @@ editable from `/admin` with no code or JSON changes required.
 - TypeScript
 - Tailwind CSS v4
 - Framer Motion
-- Prisma 7 (`@prisma/adapter-pg`) + Supabase Postgres — content database
+- Prisma 7 (`@prisma/adapter-pg`) + Neon Postgres — content database
 - Supabase Storage — media (images, video, resume PDFs)
 - Custom JWT session auth (`jose` + `bcryptjs`) — single-admin login, no third-party auth provider
 
@@ -48,15 +48,20 @@ editable from `/admin` with no code or JSON changes required.
    npm install
    ```
 
-2. **Set up Supabase**
+2. **Set up Neon (database)**
+
+   Create a free project at [neon.tech](https://neon.tech), then from the dashboard grab the
+   **direct** connection string (the one *without* `-pooler` in the hostname) — this app's traffic
+   is low enough that a single non-pooled connection is simplest, and `prisma migrate` requires a
+   direct connection regardless.
+
+3. **Set up Supabase Storage (media uploads)**
 
    Create a free project at [supabase.com](https://supabase.com), then from the dashboard grab:
-   - **Settings → Database** — the pooled connection string (port 6543) and the direct connection
-     string (port 5432)
    - **Settings → API** — the project URL and the `service_role` key
    - **Storage** — create a public bucket (default name expected: `devos-media`)
 
-3. **Configure environment variables**
+4. **Configure environment variables**
 
    Copy `.env.example` to `.env` and fill in real values:
 
@@ -66,15 +71,14 @@ editable from `/admin` with no code or JSON changes required.
 
    | Variable | Purpose |
    |---|---|
-   | `DATABASE_URL` | Pooled Postgres connection (Supavisor, port 6543) — used by the app at runtime |
-   | `DIRECT_URL` | Direct Postgres connection (port 5432) — used only by `prisma migrate` |
-   | `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+   | `DATABASE_URL` | Neon Postgres connection string — used by the app at runtime and by `prisma migrate`/`prisma db seed` |
+   | `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL (Storage only) |
    | `SUPABASE_SERVICE_ROLE_KEY` | Server-only key used for Storage uploads |
    | `SUPABASE_STORAGE_BUCKET` | Storage bucket name (defaults to `devos-media`) |
    | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Seeded as the one admin account (hashed on insert) |
    | `SESSION_SECRET` | Long random string used to sign admin session JWTs |
 
-4. **Run migrations and seed initial content**
+5. **Run migrations and seed initial content**
 
    ```bash
    npx prisma migrate dev
@@ -85,7 +89,7 @@ editable from `/admin` with no code or JSON changes required.
    wallpaper/accent catalog. Project/experience/research/etc. content is added through `/admin`
    from here on.
 
-5. **Run the dev server**
+6. **Run the dev server**
 
    ```bash
    npm run dev
@@ -106,7 +110,7 @@ editable from `/admin` with no code or JSON changes required.
 
 ## Project status
 
-**Done:** database schema + migrations, Prisma/Supabase data layer, admin auth (JWT session,
+**Done:** database schema + migrations, Prisma/Neon data layer, admin auth (JWT session,
 middleware-protected `/admin/**`), Draft Mode preview, full CRUD admin for Projects, Experience,
 Research, Skills, Services, Social Links, Navigation, Profile, Site Settings/SEO, Media Library
 (Supabase Storage upload + reusable picker), and Appearance (wallpaper/accent catalogs).
