@@ -13,7 +13,7 @@ editable from `/admin` with no code or JSON changes required.
 - Tailwind CSS v4
 - Framer Motion
 - Prisma 7 (`@prisma/adapter-pg`) + Neon Postgres — content database
-- Supabase Storage — media (images, video, resume PDFs)
+- Vercel Blob — media (images, video, resume PDFs)
 - Custom JWT session auth (`jose` + `bcryptjs`) — single-admin login, no third-party auth provider
 
 ## Architecture
@@ -55,11 +55,11 @@ editable from `/admin` with no code or JSON changes required.
    is low enough that a single non-pooled connection is simplest, and `prisma migrate` requires a
    direct connection regardless.
 
-3. **Set up Supabase Storage (media uploads)**
+3. **Set up Vercel Blob (media uploads)**
 
-   Create a free project at [supabase.com](https://supabase.com), then from the dashboard grab:
-   - **Settings → API** — the project URL and the `service_role` key
-   - **Storage** — create a public bucket (default name expected: `devos-media`)
+   From your Vercel project's **Storage** tab, create a Blob store (access: **Public**) and connect
+   it to this project. Vercel adds a `BLOB_READ_WRITE_TOKEN` environment variable automatically; for
+   local development, run `vercel env pull` to fetch it, or copy it from the store's dashboard.
 
 4. **Configure environment variables**
 
@@ -72,9 +72,7 @@ editable from `/admin` with no code or JSON changes required.
    | Variable | Purpose |
    |---|---|
    | `DATABASE_URL` | Neon Postgres connection string — used by the app at runtime and by `prisma migrate`/`prisma db seed` |
-   | `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL (Storage only) |
-   | `SUPABASE_SERVICE_ROLE_KEY` | Server-only key used for Storage uploads |
-   | `SUPABASE_STORAGE_BUCKET` | Storage bucket name (defaults to `devos-media`) |
+   | `BLOB_READ_WRITE_TOKEN` | Vercel Blob read-write token used for media uploads |
    | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Seeded as the one admin account (hashed on insert) |
    | `SESSION_SECRET` | Long random string used to sign admin session JWTs |
 
@@ -113,7 +111,7 @@ editable from `/admin` with no code or JSON changes required.
 **Done:** database schema + migrations, Prisma/Neon data layer, admin auth (JWT session,
 middleware-protected `/admin/**`), Draft Mode preview, full CRUD admin for Projects, Experience,
 Research, Skills, Services, Social Links, Navigation, Profile, Site Settings/SEO, Media Library
-(Supabase Storage upload + reusable picker), and Appearance (wallpaper/accent catalogs).
+(Vercel Blob upload + reusable picker), and Appearance (wallpaper/accent catalogs).
 
 **Not yet done:**
 - Education, Certifications, Achievements, Testimonials — schema exists, admin CRUD + public
@@ -126,4 +124,4 @@ Research, Skills, Services, Social Links, Navigation, Profile, Site Settings/SEO
 - Production hardening pass: broader loading/error states in the admin, login rate-limiting.
 
 None of the above has been run against a live database yet — verification is blocked on a local
-Postgres (Docker) or real Supabase credentials.
+Postgres (Docker) or real Neon/Vercel Blob credentials.

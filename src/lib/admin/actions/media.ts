@@ -1,7 +1,7 @@
 "use server";
 
+import { put, del } from "@vercel/blob";
 import { db } from "@/lib/db";
-import { supabaseAdmin, MEDIA_BUCKET, publicMediaUrl } from "@/lib/supabase";
 import { requireAdmin } from "@/lib/admin/guard";
 import { ok, fail, type ActionResult } from "@/lib/admin/action-result";
 import type { MediaType } from "@/generated/prisma/enums";
@@ -36,19 +36,19 @@ export async function uploadMedia(formData: FormData): Promise<ActionResult<Medi
   }
 
   const ext = file.name.includes(".") ? file.name.split(".").pop() : undefined;
-  const path = `${crypto.randomUUID()}${ext ? `.${ext}` : ""}`;
-  const buffer = Buffer.from(await file.arrayBuffer());
+  const pathname = `${crypto.randomUUID()}${ext ? `.${ext}` : ""}`;
 
-  const { error: uploadError } = await supabaseAdmin.storage
-    .from(MEDIA_BUCKET)
-    .upload(path, buffer, { contentType: file.type, upsert: false });
-
-  if (uploadError) return fail(uploadError.message);
+  let blob;
+  try {
+    blob = await put(pathname, file, { access: "public", contentType: file.type });
+  } catch (error) {
+    return fail(error instanceof Error ? error.message : "Upload failed.");
+  }
 
   const row = await db.mediaAsset.create({
     data: {
-      url: publicMediaUrl(path),
-      path,
+      url: blob.url,
+      path: blob.pathname,
       type: mediaTypeFor(file.type),
       filename: file.name,
       size: file.size,
@@ -70,7 +70,7 @@ export async function deleteMedia(id: string): Promise<ActionResult<{ id: string
   const row = await db.mediaAsset.findUnique({ where: { id } });
   if (!row) return fail("Asset not found.");
 
-  await supabaseAdmin.storage.from(MEDIA_BUCKET).remove([row.path]);
+  await del(row.path);
   await db.mediaAsset.delete({ where: { id } });
   return ok({ id });
 }

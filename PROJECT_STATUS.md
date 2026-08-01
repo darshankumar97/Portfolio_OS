@@ -5,6 +5,12 @@ It's written so that either you or a future Claude Code session can pick this up
 going without re-deriving decisions that have already been made. `README.md` covers setup
 commands; this file covers the *why*, the *what's done*, and the *what's left*, in detail.
 
+> **Database migrated to Neon, Storage migrated to Vercel Blob (2026-08-01).** Supabase has been
+> removed from this project entirely — no Supabase Postgres, Storage, Auth, or `@supabase/supabase-js`
+> dependency remains. Sections below that describe a Supabase-based local dev stack, the
+> WebSocket-polyfill workaround, or Supabase Storage as current architecture are **historical** —
+> kept for the war-stories/lessons-learned value, not because they reflect the live setup.
+
 ---
 
 ## 1. What DevOS is
@@ -35,12 +41,15 @@ that. (3) is fully built and is the main achievement of this work session.
 ### Stack
 - **Next.js 15** (App Router, React 19, TypeScript, Tailwind v4, Framer Motion) — unchanged from
   the original project.
-- **Prisma 7** (`@prisma/adapter-pg` driver adapter) talking to **Supabase Postgres** — new. Prisma
+- **Prisma 7** (`@prisma/adapter-pg` driver adapter) talking to **Neon Postgres**. Prisma
   7 changed how datasources work: connection URLs live in `prisma.config.ts` / are passed to the
   `PrismaClient` constructor via an adapter, *not* in `schema.prisma`'s `datasource` block anymore.
-- **Supabase Storage** — new. Holds every uploaded image/video/PDF. A `MediaAsset` table in
+  (Originally Supabase Postgres — migrated to Neon; see the "Database migrated to Neon, Storage
+  migrated to Vercel Blob" note further down for why both moves happened.)
+- **Vercel Blob** — holds every uploaded image/video/PDF. A `MediaAsset` table in
   Postgres tracks metadata (url, type, filename, size) independent of what references it, which is
-  what makes the Media Library page possible.
+  what makes the Media Library page possible. (Originally Supabase Storage — migrated once Postgres
+  moved to Neon, since bundling Storage with Supabase no longer had a Postgres dependency to justify it.)
 - **Custom JWT auth** (`jose` for signing/verifying, `bcryptjs` for password hashing) — new. No
   NextAuth/Clerk/Supabase Auth — this is a single-admin tool, so a minimal hand-rolled session is
   less code and less to reason about than pulling in a general-purpose auth library.
@@ -95,7 +104,6 @@ components/
 
 lib/
   db.ts                          — Prisma client singleton (pg pool adapter, hot-reload safe)
-  supabase.ts                    — server-only Supabase Storage client
   content.ts                     — REWRITTEN: async, DB-backed, cached, publish-filtered
   cache-tags.ts                  — one cache tag per entity, shared between content.ts and actions
   enum-map.ts                    — dash-case (app) <-> underscore-case (DB enum) conversion
@@ -154,8 +162,8 @@ rather than round-tripping a full page reload on every click.
 avatar, resume, OG image, wallpaper image) opens a `Drawer` that lists existing `MediaAsset` rows
 (via the `listMediaAdmin` action) and lets you upload a new file. Upload goes straight through a
 Server Action (`uploadMedia`, which accepts `FormData` with a `File` — Next.js Server Actions
-support this natively), which pushes the buffer to Supabase Storage and records a `MediaAsset` row.
-`next.config.mjs` allow-lists the Supabase storage domain for `next/image` and raises the Server
+support this natively), which calls `put()` from `@vercel/blob` and records a `MediaAsset` row.
+`next.config.mjs` allow-lists the Vercel Blob storage domain for `next/image` and raises the Server
 Actions body size limit to 25MB (default is 1MB, far too small for images/video).
 
 **Auth:** `/api/admin/login` checks email+bcrypt-compare against the single `AdminUser` row, signs
@@ -175,11 +183,11 @@ publish" without building a parallel content-versioning system.
 
 ### Key decisions and why (so you don't re-litigate them)
 
-- **Supabase was chosen over Vercel Postgres/Blob** because it bundles Postgres + Storage in one
-  dashboard/account — fewer moving parts for a single-admin CMS. Prisma sits on top of Supabase's
-  Postgres rather than using Supabase's own client/PostgREST for data, because Prisma's
-  schema-as-code migrations and type safety are worth the one extra dependency for a schema this
-  size (18 models).
+- **Supabase was originally chosen over Vercel Postgres/Blob** because it bundled Postgres + Storage
+  in one dashboard/account — fewer moving parts for a single-admin CMS. That rationale no longer
+  applies: Postgres moved to Neon and Storage moved to Vercel Blob (2026-08-01), so the project now
+  has zero Supabase dependency. Prisma's schema-as-code migrations and type safety are still why
+  Prisma is used for data access rather than a provider-specific client.
 - **Custom auth over NextAuth/Supabase Auth** because there is exactly one user. A general-purpose
   multi-provider auth system would be pure overhead here.
 - **`published: boolean` over a full draft/live dual-copy versioning system** because item-level
@@ -546,7 +554,7 @@ Suggested approach:
 
 ## 7. Phase 4 — production hardening
 
-- **Images**: `next.config.mjs` already allow-lists the Supabase storage domain; double check every
+- **Images**: `next.config.mjs` already allow-lists the Vercel Blob storage domain; double check every
   `<img>`/`<Image>` in the codebase actually uses `next/image` (the gallery preview in
   `ProjectForm.tsx` currently uses a raw `<img>` with an eslint-disable — fine for a small admin
   thumbnail, but revisit if it needs optimization).
@@ -560,8 +568,8 @@ Suggested approach:
   For a single-admin tool exposed to the internet, add a simple attempt counter (in-memory is fine
   given the low-traffic, single-instance nature of this deployment; a DB-backed counter is more
   robust if deployed across multiple serverless regions).
-- **README**: keep it in sync as Phase 2/3/4 land — it was rewritten this session to reflect the
-  new Supabase/Prisma/admin architecture and already documents the setup flow end to end.
+- **README**: keep it in sync as Phase 2/3/4 land — it documents the Neon/Vercel Blob/Prisma/admin
+  architecture and the setup flow end to end.
 
 ---
 
